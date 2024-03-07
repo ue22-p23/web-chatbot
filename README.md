@@ -60,7 +60,7 @@ tens of seconds - so not very user-friendly !
 so you have two options for this exercise - and like always, fast students are encouraged to tackle both:
 
 - use a **non-streaming mode** - the easiest, but less rewarding:  
-  to enable this you need to pass `streaming: "false"` in your request data  
+  to enable this you need to pass `stream: "false"` in your request data  
   in this case your code expects a single response, so the code would look like
   any other exercise you have done so far with `fetch()`  
   it is less rewarding because the user possibly has to wait for a looooong time
