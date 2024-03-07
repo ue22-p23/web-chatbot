@@ -8,9 +8,23 @@
 </head>
 
 <body>
-    <h1>my chatbot</h1>
-    <p>hello, how can I help you ?</p>
-    <div id="messages"></div>
+    <h1>My first chatbot</h1>
+    <div id=""settings">
+        <span>
+            <input type="checkbox" id="streaming" />
+            <label for="streaming">streaming</label>
+        </span>
+        <span>
+            <select name="model" id="model">
+                <option value="llama2">llama2</option>
+                <option value="mistral">mistral</option>
+                <!-- <option value="gpt-3">gpt-3</option> -->
+            </select>
+        </span>
+        </div>
+    <div id="messages">
+        <div>hello, how can I help you ?</div>
+    </div>
     <div id="prompt-line">
         <input id="prompt" type="text" id="input" />
         <button id="send">send</button>

@@ -19,7 +19,7 @@
 }
 
 /* prompts */
-#messages>div:nth-child(2n+1) {
+#messages>div:nth-child(2n) {
     background-color: #e2f0c7;
     padding: 10px;
     margin: 10px 0;
@@ -32,7 +32,7 @@
 }
 
 /* responses */
-#messages>div:nth-child(2n) {
+#messages>div:nth-child(2n+1) {
     background-color: #ddd;
     padding: 10px;
     margin: 10px 0;

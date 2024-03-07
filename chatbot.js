@@ -4,8 +4,8 @@ let PORT = 8080
 
 const URL = () => `http://${HOSTNAME}:${PORT}/api/generate`
 
-// only in non-streaming mode for now
-let STREAMING_MODE = false
+// only in streaming mode for now
+// let STREAMING_MODE = false
 
 window.addEventListener('DOMContentLoaded',
     (event) => {
@@ -18,12 +18,6 @@ window.addEventListener('DOMContentLoaded',
             document.getElementById("send").disabled = true
         }
 
-        // console.log("hello chatbot")
-        let streaming_mode = STREAMING_MODE ? "streaming" : "non-streaming"
-        document.querySelector("h1").innerText = `Chatbot (${streaming_mode})`
-
-        document.getElementById("prompt").value = `Hi I am a human, what's your name ?`
-
         const addMessage = (text) => {
             const messages = document.getElementById("messages")
             const message = document.createElement('div')
@@ -31,14 +25,24 @@ window.addEventListener('DOMContentLoaded',
             messages.appendChild(message)
         }
 
+        const addPiece = (text) => {
+            document.getElementById("messages").lastChild.innerText += text
+        }
+
         const sendPrompt = (event) => {
+            const streaming = document.getElementById("streaming").checked
+            const model = document.getElementById("model").value
+
             let prompt = document.getElementById("prompt").value
             let data = {
-                model: "mistral",
-                stream: false,
+                model: model,
+                // stream: false,
                 prompt
             }
-            const messages = document.getElementById("messages")
+            if (! streaming)
+                request.stream = false
+
+            // const messages = document.getElementById("messages")
 
             // show message as sent
             console.log("sending prompt:", prompt)
@@ -46,18 +50,46 @@ window.addEventListener('DOMContentLoaded',
             disableSend()
 
             const request = { method: 'POST', body: JSON.stringify(data) }
-            if (! STREAMING_MODE) request.streaming = false
+            console.log(request)
             fetch(URL(), request)
-            .then( response => response.json())
-            .then( json => {
-                const text = json.response
-                addMessage(text)
-                enableSend()
-            })
-
-        }
+                .then(response => {
+                    addMessage("")
+                    const reader = response.body.getReader()
+                    const stream = new ReadableStream({
+                        start(controller) {
+                            const decoder = new TextDecoder()
+                            const pump = () => {
+                                reader.read()
+                                    .then(({ done, value }) => {
+                                        if (done) {
+                                            console.log('Stream complete')
+                                            enableSend()
+                                            controller.close()
+                                            return
+                                        }
+                                        const piece = JSON.parse(decoder.decode(value)).response
+                                        addPiece(piece)
+                                        // console.log('Stream value:', piece)
+                                        controller.enqueue(value)
+                                        pump()
+                                    })
+                                    .catch(error => {
+                                        console.error('Stream error:', error)
+                                        controller.error(error)
+                                    })
+                                }
+                                pump()
+                            }
+                        })
+                    return new Response(stream, { headers: response.headers })
+                })
+                .then(response => console.log("the end"))
+                .catch(error => console.error('Fetch error:', error))
+            }
 
         document.getElementById("send").addEventListener("click", sendPrompt)
         // tmp for debugging, avoid the need to click the button upon reload
-        sendPrompt()
+        document.getElementById("prompt").value = `Hi I am a human, what's your name ?`
+        document.getElementById("streaming").checked = true
+        // sendPrompt()
 })
