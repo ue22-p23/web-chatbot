@@ -29,27 +29,27 @@ field above; here are the available options for that field (see also the full li
 
 ## hints
 
-- here's an example taken from the ollama documentation, adapted to our setup
-
-  ```console
-  # if you have curl installed, you can use this as-is in the terminal
-
-  curl -X POST http://mistral.pl.sophia.inria.fr:8080/api/generate -d '{
-    "model": "mistral",
-    "prompt":"Here is a story about llamas eating grass"
-   }'
-  {"model":"mistral","created_at":"2024-03-06T10:42:41.922755311Z","response":" Title","done":false}
-  {"model":"mistral","created_at":"2024-03-06T10:42:42.047344064Z","response":":","done":false}
-  {"model":"mistral","created_at":"2024-03-06T10:42:42.21405405Z","response":" The","done":false}
-  {"model":"mistral","created_at":"2024-03-06T10:42:42.378292723Z","response":" G","done":false}
-  {"model":"mistral","created_at":"2024-03-06T10:42:42.541091495Z","response":"raz","done":false}
-  ....
-  ```
-  which means: if I send a POST request on that URL with this (JSON) data, I am
-  getting a stream of responses, each of them being a part of the answer to my
-  prompt
-
 ### streaming or not streaming
+
+here's an example taken from the ollama documentation, adapted to our setup
+
+```console
+# if you have curl installed, you can use this as-is in the terminal
+
+curl -X POST http://mistral.pl.sophia.inria.fr:8080/api/generate -d '{
+  "model": "mistral",
+  "prompt":"Here is a story about llamas eating grass"
+ }'
+{"model":"mistral","created_at":"2024-03-06T10:42:41.922755311Z","response":" Title","done":false}
+{"model":"mistral","created_at":"2024-03-06T10:42:42.047344064Z","response":":","done":false}
+{"model":"mistral","created_at":"2024-03-06T10:42:42.21405405Z","response":" The","done":false}
+{"model":"mistral","created_at":"2024-03-06T10:42:42.378292723Z","response":" G","done":false}
+{"model":"mistral","created_at":"2024-03-06T10:42:42.541091495Z","response":"raz","done":false}
+....
+```
+which means: if I send a POST request on that URL with this (JSON) data, I am
+getting a stream of responses, each of them being a part of the answer to my
+prompt
 
 in the above example, you can see that the answers come from the server "in small bits"  
 this is because by default, the request is made in so-called *streaming* mode,
@@ -98,3 +98,12 @@ so you have two options for this exercise - and like always, fast students are e
     }
     ...
     ```
+
+### other tips
+
+- to read the value of an input field, use `document.getElementById('id').value`  
+  here this would apply to the prompt and the model input fields
+- it might help to disable the button while the bot is answering;  
+  to that end, use `document.getElementById('id').disabled = true` - and `false` to re-enable it
+- the CSS assumes that the prompts and answers will get in the `#messages` div, one after the other;  
+  your code should make sure to respect this assumption, or you'll need to rewrite parts of the CSS
