@@ -8,13 +8,34 @@
 </head>
 
 <body>
-    <h1>my chatbot</h1>
-    <p>hello, how can I help you ?</p>
-    <div id="prompt-line">
-        <input id="prompt" type="text" id="input" />
-        <button id="send">send</button>
+    <h1>My first chatbot</h1>
+    <div id="settings">
+        <span>
+            <label for="streaming">streaming</label>
+            <input type="checkbox" id="streaming" />
+        </span>
+        <span>
+            <label for="model">model</label>
+            <select id="model">
+                <option value="llama2">llama2</option>
+                <option value="mistral">mistral</option>
+                <option value="gemma">gemma</option>
+            </select>
+        </span>
+        <span>
+            <label for="server-name">server</label>
+            <select id="server-name">
+                <!-- will be filled by setURLOptions -->
+            </select>
+        </span>
+        </div>
+    <div id="messages">
+        <div>hello, how can I help you ?</div>
     </div>
-    <ul id="messages"></ul>
+    <form id="prompt-line">
+        <input id="prompt" type="text" placeholder="Enter your prompt here"/>
+        <button type="submit" id="send">send</button>
+    </form>
 </body>
 
 </html>

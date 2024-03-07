@@ -1,20 +1,78 @@
-div {
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#settings {
+    display: flex;
+
+    &>span {
+        flex-grow: 1;
+
+        & select {
+            font-size: 16px;
+        }
+    }
+}
+
+#prompt-line {
     display: flex;
     flex-wrap: nowrap;
+
+    & #prompt {
+        flex-grow: 1;
+        margin-right: 10px;
+        padding: 4px 20px;
+        border-radius: 5px;
+    }
+
+    & #send {
+        padding: 4px 10px;
+        border-radius: 5px;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+
+        &:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    }
 }
 
-#prompt {
-    flex-grow: 1;
-    margin-right: 10px;
-    padding: 4px;
+/* the conversation 
+   assuming the very first message is the bot's welcome message
+ */
+#messages>div:nth-child(2n) {
+    background-color: #e2f0c7;
+    padding: 10px;
+    margin: 10px 0;
     border-radius: 5px;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+
+    &::before {
+        content: "You: ";
+        font-weight: bold;
+    }
 }
 
-#send {
-    padding: 4px 10px;
+/* responses */
+#messages>div:nth-child(2n+1) {
+    background-color: #ddd;
+    padding: 10px;
+    margin: 10px 0;
     border-radius: 5px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
+
+    &::before {
+        content: "Bot: ";
+        font-weight: bold;
+    }
+}
+
+/* cosmetic */
+input, body {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: #f2f2f2;
 }
