@@ -1,4 +1,4 @@
-div {
+#prompt-line {
     display: flex;
     flex-wrap: nowrap;
 }
@@ -6,9 +6,8 @@ div {
 #prompt {
     flex-grow: 1;
     margin-right: 10px;
-    padding: 4px;
+    padding: 4px 20px;
     border-radius: 5px;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
 }
 
 #send {
@@ -17,4 +16,44 @@ div {
     background-color: #4CAF50;
     color: white;
     cursor: pointer;
+}
+
+/* prompts */
+#messages>div:nth-child(2n+1) {
+    background-color: #e2f0c7;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+
+    &::before {
+        content: "You: ";
+        font-weight: bold;
+    }
+}
+
+/* responses */
+#messages>div:nth-child(2n) {
+    background-color: #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+
+    &::before {
+        content: "Bot: ";
+        font-weight: bold;
+    }
+}
+
+
+/* cosmetic */
+input, body {
+    font-family: 'Courier New', Courier, monospace;
+}
+body {
+    background-color: #f2f2f2;
+}
+
+#send:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
