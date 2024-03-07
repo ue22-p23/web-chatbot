@@ -25,11 +25,11 @@ window.addEventListener('DOMContentLoaded',
             messages.appendChild(message)
         }
 
-        const addPiece = (text) => {
+        const appendChunk = (text) => {
             document.getElementById("messages").lastChild.innerText += text
         }
 
-        const sendPrompt = (event) => {
+        const sendPrompt = async (event) => {
             const streaming = document.getElementById("streaming").checked
             const model = document.getElementById("model").value
 
@@ -51,45 +51,28 @@ window.addEventListener('DOMContentLoaded',
 
             const request = { method: 'POST', body: JSON.stringify(data) }
             console.log(request)
-            fetch(URL(), request)
-                .then(response => {
-                    addMessage("")
-                    const reader = response.body.getReader()
-                    const stream = new ReadableStream({
-                        start(controller) {
-                            const decoder = new TextDecoder()
-                            const pump = () => {
-                                reader.read()
-                                    .then(({ done, value }) => {
-                                        if (done) {
-                                            console.log('Stream complete')
-                                            enableSend()
-                                            controller.close()
-                                            return
-                                        }
-                                        const piece = JSON.parse(decoder.decode(value)).response
-                                        addPiece(piece)
-                                        // console.log('Stream value:', piece)
-                                        controller.enqueue(value)
-                                        pump()
-                                    })
-                                    .catch(error => {
-                                        console.error('Stream error:', error)
-                                        controller.error(error)
-                                    })
-                                }
-                                pump()
-                            }
-                        })
-                    return new Response(stream, { headers: response.headers })
-                })
-                .then(response => console.log("the end"))
-                .catch(error => console.error('Fetch error:', error))
+            const response = await fetch(URL(), request)
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder()
+            addMessage("")
+            while (true) {
+                const {value, done} = await reader.read()
+                if (done)
+                    break
+                // decode bytes as (json)text
+                const json = decoder.decode(value, {stream: true})
+                // decode as json
+                const data = JSON.parse(json)
+                console.log("value:", data.response)
+                appendChunk(data.response)
             }
+            enableSend()
+            console.log("the end")
+        }
 
         document.getElementById("send").addEventListener("click", sendPrompt)
         // tmp for debugging, avoid the need to click the button upon reload
         document.getElementById("prompt").value = `Hi I am a human, what's your name ?`
         document.getElementById("streaming").checked = true
-        // sendPrompt()
+        sendPrompt()
 })
