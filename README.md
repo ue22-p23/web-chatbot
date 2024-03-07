@@ -9,12 +9,27 @@ create your own conversional bot, using the starter code that only has
 - and a "messages" area (empty on startup) where you are expected to keep track
   of the conversation (both prompts and answers)
 
+## the server
+
+in order to serve your needs, we have setup a ***ollama*** instance that serves
+various LLM models  
+the URL to use to reach this service is defined in the `chatbot.js` file  
+**NOTE** that this service does not have a large pool of computing resources..
+
+### several models
+
+the beauty of *ollama* is that several models are made available through the
+same API; this means you are going to be in a position to compare the
+performance of several popular LLMs by just changing the value for the `model`
+field above; here are the available options for that field (see also the full list at <https://ollama.com/library>)
+
+- `llama2` wich is a bit dumb, but can be helpful during development as it may
+  answer faster and use fewer resources
+- `mistral`: is a.k.a. mistral-7B because it has 7 billion parameters
+
 ## hints
 
-- we have setup a ***ollama*** instance that serves various LLM models  
-  NOTE that this service does not have a large pool of computing resources..
-- the URL you need to use to join this service is defined `chatbot.js`
-- for example, here's an example taken from the ollama documentation, adapted to our setup
+- here's an example taken from the ollama documentation, adapted to our setup
 
   ```console
   # if you have curl installed, you can use this as-is in the terminal
@@ -32,17 +47,7 @@ create your own conversional bot, using the starter code that only has
   ```
   which means: if I send a POST request on that URL with this (JSON) data, I am
   getting a stream of responses, each of them being a part of the answer to my
-  request
-
-### several models
-
-the beauty of *ollama* is that several models are made available through the
-same API; this means you are going to be in a position to compare the
-performance of several popular LLMs by just changing the value for the `model`
-field above; here are the available options for that field (see also the full list at <https://ollama.com/library>)
-
-- mistral: is a.k.a. mistral-7B because it has 7 billion parameters
-- xxx we need to find a simpler less CPU-consuming model...
+  prompt
 
 ### streaming or not streaming
 
@@ -69,13 +74,27 @@ so you have two options for this exercise - and like always, fast students are e
   but on the other hand it is (much) more user-friendly to see the answer pieces
   get displayed as they are churned out by the LLM model
 
-  in order to address this situation, you will need to use something called an
-  asynchronous iterator, and uing it boils down to using something like
-  
+  in order to address this situation, you will need to use something like the
+  following code snippet
+
   ```js
-  // how to use an asynchronous iterator
-  // xxx
-  async for (let chunk of response) {
-    // do something with that chunk
-  }
-  ```
+  // arming the callback is done as usual; it does not matter if the function is async or not
+  document.getElementById('send').addEventListener('click', sendPrompt)
+
+  // it is important to define an 'async' function
+  // because otherwise you cannot use 'await' in the body of the function
+  const sendPrompt = async () => {
+    ...
+    const response = await fetch(url, options)
+    const reader = response.body.getReader()
+    while (true) {
+        // this will wait for the next chunk of the response
+        // so the call to read() returns something different each time
+        const { done, value } = await reader.read()
+        // this is how we detect that the stream is over
+        if (done) break
+        // do something with the value
+        ...
+    }
+    ...
+    ```
