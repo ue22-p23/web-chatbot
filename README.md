@@ -22,7 +22,7 @@ the details about how to reach these servers are defined in the `chatbot.js`
 file in the `SERVERS` variable (remember to add the `/api/generate` path to the
 server top URL to reach the API endpoint)
 
-**NOTES**
+### more about the servers
 
 - as you will see there are 2 endpoints available; the first one has more
   computing resources, in particular it has a GPU
@@ -45,6 +45,34 @@ field above; here are the available options for that field
   more realistic answers once your code works fine
 
 ## hints
+
+### timeline
+
+starting from scratch, I recommend that you tackle the problem in the following order
+
+- start with the simplest setup, i.e. using the CPU box (no need for
+  authentication), first in no-streaming mode (see below)  
+  this amounts to sending a usual POST request to the server, and waiting for
+  the answer
+- at that point, pour authentication in the mix, so you can talk to the GPU,
+  which will answer faster
+- and then only try to tackle the streaming mode, which is a little more complex
+  (although we give the code for that below)
+
+### authenticating
+
+the first server requires authentication, so you will need to somehow provide a `login / password`  
+to that effect you need to enhance the `request` object passed to `fetch()` with
+an additional field `headers` that you would build like so:
+
+```js
+    if (server.username && server.password) {
+         console.log("inserting user/password")
+         const headers = new Headers()
+         headers.append('Authorization', 'Basic ' + btoa(`${server.username}:${server.password}`))
+         request.headers = headers
+    }
+```
 
 ### streaming or not streaming
 
@@ -77,9 +105,9 @@ prompt
 in the above example, you can see that the answers come from the server "in small bits"  
 this is because:
 
-* by default, the request is made in so-called *streaming* mode (available bits
+- by default, the request is made in so-called *streaming* mode (available bits
   of the answer are sent as soon as they are available)
-* as opposed to the more usual **non-streaming** mode where the answer would
+- as opposed to the more usual **non-streaming** mode where the answer would
 come **in a single response** - but at the very end of the processing, which
 typically takes tens of seconds - so not very user-friendly !
 
