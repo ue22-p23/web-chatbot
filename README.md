@@ -2,7 +2,7 @@
 
 ## assignment
 
-create your own conversional bot, using the starter code that has
+create your own conversational bot, using the starter code that has
 
 - a few settings:
   - a radio button to choose between streaming and non-streaming mode (see below)
@@ -38,11 +38,9 @@ same API; this means you are going to be in a position to compare the
 performance of several popular LLMs by just changing the value for the `model`
 field above; here are the available options for that field
 
-- `gemma`: a small model; I recommended you use only this model during development
+- `gemma2:2b`: a small model; I recommended you use only this model during development
   as it is faster and uses fewer resources
-- `llama2` wich is little less dumb
-- `mistral`: is a.k.a. mistral-7B because it has 7 billion parameters, to get
-  more realistic answers once your code works fine
+- `mistral:7b`: it has 7 billion parameters, to get more realistic answers once your code works fine
 
 ## hints
 
@@ -61,7 +59,7 @@ starting from scratch, I recommend that you tackle the problem in the following 
 
 ### authenticating
 
-the first server requires authentication, so you will need to somehow provide a `login / password`  
+the GPU server requires authentication, so you will need to somehow provide a `login / password`  
 to that effect you need to enhance the `request` object passed to `fetch()` with
 an additional field `headers` that you would build like so:
 
@@ -162,10 +160,23 @@ so you have two options for this exercise - and like always, fast students are e
   ...
   ```
 
+### fetch the list of available models
+
+once all this works, you may want to improve your code so that the user is **no
+longer offered a fixed list** of models;  
+instead, we want to show the list of models that are **actually available** on
+the server
+
+and to that end, you should know that the llama API provides a `/api/tags` endpoint  
+be wary to refresh the models list **each time another server** is selected;  
+(it might make sense to cache the results so that successive switches between the 2
+servers proceed as smoothly as possible)
+
 ### other tips
 
 - the starter contains a few utility functions that you may find useful
-- in particular, it might help to disable the button while the bot is answering,
+- in particular, it might help to disable the button while the bot is answering
+  (to avoid multiple simultaneous requests);  
   use `enableSend/disableSend` functions for that
 - the CSS assumes that the prompts and answers will get in the `#messages` div,
   in alternating order (prompt, answer, prompt, answer, etc.);  

@@ -1,11 +1,33 @@
-// NOTE that the API endpoint is always /api/generate
+// NOTE that the API endpoints that we use are
+// - /api/generate
+// - /api/tags  (later on, to get the list of models)
 
 const SERVERS = [
+
     // this one is fast because it has GPUs, but it requires a login / password
-    { name: "GPU fast", url: "https://ollama-sam.inria.fr",
-      username: "Bob", password: "hiccup", default: true},
+    {
+        name: "GPU fast", url: "https://ollama-sam.inria.fr",
+        username: "Bob", password: "hiccup",
+    },
+
     // this one is slow because it has no GPUs, but it does not require a login / password
-    { name: "CPU slow", url: "http://ollama.pl.sophia.inria.fr:8080"},
+    {
+        name: "CPU slow", url: "http://ollama.pl.sophia.inria.fr:8080",
+        // start with this one as the default
+        default: true,
+    },
+]
+
+
+// we provide some reasonable defaults
+// for the initial steps of the project
+// however in the final release the list of models
+// should be fetched at the server too
+// NOTE: that if you receive a 404 answer
+// this might actually mean the model is not available
+const MODELS = [
+    "gemma2:2b",
+    "mistral:7b",
 ]
 
 
@@ -14,9 +36,20 @@ window.addEventListener('DOMContentLoaded',
 
         //// utility functions - optional and for convenience only
 
-        // set the default mode
-        const setDefaultModel = () => {
-            document.getElementById("model").value = "gemma"
+        // fill the dropdown to choose the model
+        // the starter code uses the MODELS constant to populate the dropdown
+        // however a more elaborate solution would be to fetch the list of models
+        // from the server at the /api/tags endpoint
+        const populateModels = (models) => {
+            // console.log("populating models", models)
+            const modelRoot = document.getElementById("model")
+            // clean up the dropdown
+            while (modelRoot.firstChild)
+                modelRoot.removeChild(modelRoot.firstChild)
+            for (const model of models) {
+                const option = new Option(model, model)
+                modelRoot.appendChild(option)
+            }
         }
 
         // add incoming messages to the chat
@@ -61,6 +94,7 @@ window.addEventListener('DOMContentLoaded',
         }
 
 
+        // your code goes here
 
         const sendPrompt = async (event) => {
             // needed because we use a form
@@ -74,7 +108,7 @@ window.addEventListener('DOMContentLoaded',
 
         document.getElementById("streaming").checked = true
         setURLOptions()
-        setDefaultModel()
+        populateModels(MODELS)
         document.getElementById("send").addEventListener("click", sendPrompt)
 
         // convenience for development
